@@ -4,15 +4,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/style.css">
 
-    <title>Hi!</title>
+    <title>Guest Book</title>
 </head>
 <body>
     
-<h1>Hello from Render</h1>
-{% if name %}
-<h2>and hello to {{name}}</h2>
-{% endif %}
+<h1>Join the Guestlist</h1>
+<div class="form-container">
+    <form class="pure-form-stacked" action="/submit_form" method="post">
+    <fieldset>
+        <legend>Guestbook Info</legend>
+        <label for="firstname">First name:</label>
+            <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" required>
+        <label for="lastname">Last name:</label>
+            <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" required>
+        <label for="phone">Phone number:</label>
+            <input type="number" id="phone" name="phone" placeholder="Enter your phone number" required>
+        <button type="submit" class="pure-button pure-button-primary">Submit</button>
+    </fieldset>
+</form>
+</div>
+
 </body>
 </html>

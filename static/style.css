@@ -1,3 +1,37 @@
 * {
-    background-color:lightsalmon;
+    background-color:rgb(129, 127, 197);
+    text-align: center;
 }
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-container fieldset {
+    background-color: rgb(95, 84, 98);
+    border:2px solid black;
+    border-radius: 5px;
+}
+
+.pure-button {
+    background-color: rgb(60, 43, 64);
+}
+
+input {
+    background-color: white;
+}
+
+label {
+    background-color: rgb(114, 83, 121);
+}
+
+table.pure-table {
+    margin-left: auto;
+    margin-right: auto;
+}
+table th {
+    background-color: rgb(114, 83, 121);
+}
+
+
