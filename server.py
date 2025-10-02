@@ -1,8 +1,13 @@
 from contextlib import contextmanager
 import logging
-import os
 
-from flask import current_app, g, Flask, render_template, request
+import os 
+import json
+from urllib.parse import quote_plus, urlencode
+from authlib.integrations.flask_client import OAuth
+from dotenv import find_dotenv, load_dotenv
+from flask import current_app, g, Flask, render_template, request, session, redirect, url_for
+
 
 import psycopg2
 from psycopg2.pool import ThreadedConnectionPool
@@ -10,13 +15,63 @@ from psycopg2.extras import DictCursor
 
 pool = None
 
-app = Flask(__name__)
 
+##### AUTH STUFF ######
+
+ENV_FILE = find_dotenv()
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
+
+app = Flask(__name__)
+app.secret_key = os.environ['FLASK_SECRET']
+
+oauth = OAuth(app)
+
+oauth.register(
+    "auth0",
+    client_id=os.environ.get("AUTH0_CLIENT_ID"),
+    client_secret=os.environ.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{os.environ.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+)
+
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
+    return redirect(url_for("hello"))
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(
+        "https://" + os.environ.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("home", _external=True),
+                "client_id": os.environ.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
+
+##### END OF AUTH STUFF ######
 
 @app.route('/')
 @app.route('/<name>')
 def hello(name=None):
-    return render_template('hello.html', name=name)
+    if name:
+        session["name"] = name
+    return render_template('hello.html', name=session.get("name"))
 
 def setup():
     global pool
@@ -84,4 +139,5 @@ def submit_form():
     guest = get_people()
     return render_template('guest.html', name=None, guest=guest)
 
+# <--------------------auth0----------------------->
 

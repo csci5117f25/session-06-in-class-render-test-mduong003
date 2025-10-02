@@ -12,6 +12,20 @@
 <body>
     
 <h1>Join the Guestlist</h1>
+
+<!-- auth -->
+{% if session %}
+<h1>SESSION EXISTS</h1>
+<code>
+    <pre>
+        {{session.get("user") | tojson}}
+    </pre>
+</code>
+{% else %}
+<h1>NO SESSION</h1>
+{% endif %}
+<!-- auth -->
+
 <div class="form-container">
     <form class="pure-form-stacked" action="/submit_form" method="post">
     <fieldset>
