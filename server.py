@@ -49,6 +49,7 @@ def callback():
     session["user"] = token
     return redirect(url_for("hello"))
 
+    
 @app.route("/logout")
 def logout():
     session.clear()
@@ -57,7 +58,7 @@ def logout():
         + "/v2/logout?"
         + urlencode(
             {
-                "returnTo": url_for("home", _external=True),
+                "returnTo": url_for("hello", _external=True),
                 "client_id": os.environ.get("AUTH0_CLIENT_ID"),
             },
             quote_via=quote_plus,
@@ -67,11 +68,10 @@ def logout():
 ##### END OF AUTH STUFF ######
 
 @app.route('/')
-@app.route('/<name>')
-def hello(name=None):
-    if name:
-        session["name"] = name
-    return render_template('hello.html', name=session.get("name"))
+def hello():
+    return render_template("hello.html", session=session.get('user'), pretty=json.dumps(session.get('user'), indent=4))
+
+
 
 def setup():
     global pool
